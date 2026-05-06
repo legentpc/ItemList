@@ -1,0 +1,5 @@
+* text eol=lf
+
+# Requires crlf
+*.bat text eol=crlf
+

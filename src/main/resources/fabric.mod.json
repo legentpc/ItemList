@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "skyblock-item-list",
+	"version": "${version}",
+	"name": "Skyblock Item List",
+	"description": "",
+	"authors": [
+		"Alex33856"
+	],
+	"contact": {
+		"sources": ""
+	},
+	"license": "",
+	"icon": "assets/skyblock-item-list/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			{
+				"value": "com.operationpotato.itemlist.SkyblockItemList",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"skyblock-item-list.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~26.1",
+		"java": ">=25",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
