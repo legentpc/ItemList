@@ -1,6 +1,6 @@
 package com.operationpotato.itemlist.gui
 
-import com.operationpotato.itemlist.utils.SkyblockItems
+import com.operationpotato.itemlist.utils.SkyBlockItems
 import com.operationpotato.itemlist.utils.ThreadUtils
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractContainerWidget
@@ -115,7 +115,7 @@ class ItemList(x: Int, y: Int, width: Int, height: Int) :
 		fun getItems(): List<StackDisplay> {
 			val displays: MutableList<StackDisplay> = mutableListOf()
 
-			SkyblockItems.items.forEach { stack ->
+			SkyBlockItems.items.forEach { stack ->
 				val display = StackDisplay(stack)
 				displays.add(display)
 			}

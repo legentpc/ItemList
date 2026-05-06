@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "skyblock-item-list",
 	"version": "${version}",
-	"name": "Skyblock Item List",
+	"name": "SkyBlock Item List",
 	"description": "",
 	"authors": [
 		"Alex33856"
@@ -16,7 +16,7 @@
 	"entrypoints": {
 		"client": [
 			{
-				"value": "com.operationpotato.itemlist.SkyblockItemList",
+				"value": "com.operationpotato.itemlist.SkyBlockItemList",
 				"adapter": "kotlin"
 			}
 		]

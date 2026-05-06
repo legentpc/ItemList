@@ -5,7 +5,7 @@ import tech.thatgravyboat.skyblockapi.api.repo.LazyItemStack
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockItemsRepo
 import tech.thatgravyboat.skyblockapi.utils.lazy.registryBoundLazy
 
-object SkyblockItems {
+object SkyBlockItems {
 	val itemNames by registryBoundLazy { getAllItemNames() }
 	val items by registryBoundLazy { getAllItems() }
 

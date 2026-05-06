@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import tech.thatgravyboat.skyblockapi.api.location.LocationAPI
 import tech.thatgravyboat.skyblockapi.utils.extentions.right
 
-object SkyblockItemList : ClientModInitializer {
+object SkyBlockItemList : ClientModInitializer {
 	private val logger = LoggerFactory.getLogger("skyblock-item-list")
 
 	override fun onInitializeClient() {
