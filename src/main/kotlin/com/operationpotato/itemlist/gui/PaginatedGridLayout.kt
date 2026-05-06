@@ -40,10 +40,7 @@ class PaginatedGridLayout(private var x: Int, private var y: Int) : Layout {
 
 	fun switchPage(page: Int) {
 		activePage = page.coerceIn(0, gridLayouts.size)
-		val layout = getPageLayout(activePage) ?: return
-		if (!layout.hasBeenArranged) {
-			layout.arrangeElements()
-		}
+		arrangeElements()
 	}
 
 	fun visitPageWidgets(consumer: Consumer<AbstractWidget>) {
