@@ -3,8 +3,9 @@ package com.operationpotato.itemlist.gui
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
-import net.minecraft.util.CommonColors
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
@@ -42,7 +43,13 @@ class StackDisplay(val lazyStack: LazyItemStack) :
 		graphics.pushPop {
 			graphics.translate(x, y)
 			graphics.scale(scale, scale)
+			if (isHovered) graphics.blitSprite(
+				RenderPipelines.GUI_TEXTURED, HIGHLIGHT_BACK, -4, -4, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE
+			)
 			graphics.fakeItem(stack, 0, 0)
+			if (isHovered) graphics.blitSprite(
+				RenderPipelines.GUI_TEXTURED, HIGHLIGHT_FRONT, -4, -4, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE
+			)
 		}
 
 		if (isHovered) {
@@ -60,5 +67,10 @@ class StackDisplay(val lazyStack: LazyItemStack) :
 	companion object {
 		const val STACK_WIDTH = 16
 		const val STACK_HEIGHT = 16
+
+		const val HIGHLIGHT_SIZE = 24
+
+		private val HIGHLIGHT_BACK: Identifier = Identifier.withDefaultNamespace("container/slot_highlight_back")
+		private val HIGHLIGHT_FRONT: Identifier = Identifier.withDefaultNamespace("container/slot_highlight_front")
 	}
 }
