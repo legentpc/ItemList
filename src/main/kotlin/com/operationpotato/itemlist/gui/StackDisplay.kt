@@ -46,7 +46,7 @@ class StackDisplay(val lazyStack: LazyItemStack) :
 		}
 
 		if (isHovered) {
-			graphics.setComponentTooltipForNextFrame(McClient.gui.font, getTooltipLines(), x, y)
+			graphics.setComponentTooltipForNextFrame(McClient.gui.font, getTooltipLines(), mouseX, mouseY)
 		}
 	}
 
