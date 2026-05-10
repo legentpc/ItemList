@@ -2,11 +2,7 @@ package com.operationpotato.itemlist.gui
 
 import com.operationpotato.itemlist.api.impl.PluginManager
 import net.minecraft.client.gui.components.AbstractWidget
-import net.minecraft.client.gui.layouts.GridLayout
-import net.minecraft.client.gui.layouts.Layout
-import net.minecraft.client.gui.layouts.LayoutElement
-import net.minecraft.client.gui.layouts.LayoutSettings
-import net.minecraft.client.gui.layouts.SpacerElement
+import net.minecraft.client.gui.layouts.*
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import java.util.function.Consumer
 
@@ -48,11 +44,12 @@ class PaginatedGridLayout(private var x: Int, private var y: Int) : Layout {
 		val excludedAreas = calcExcludedAreas(x, y, maxCols, maxRows, itemSize)
 		// don't bother if >50% of the screen is excluded
 		if (excludedAreas.size > (maxCols * maxRows * 0.5)) return
-		children.forEach { display ->
+		val iterator = children.iterator()
+		while (iterator.hasNext()) {
 			if (excludedAreas.contains(Pair(col, row))) {
 				layout.addChild(SpacerElement(itemSize, itemSize), row, col)
 			} else {
-				layout.addChild(display, row, col)
+				layout.addChild(iterator.next(), row, col)
 			}
 			col += 1
 			if (col > maxCols) {
