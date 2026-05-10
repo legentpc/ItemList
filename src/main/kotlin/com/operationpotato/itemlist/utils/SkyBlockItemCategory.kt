@@ -5,6 +5,7 @@ enum class SkyBlockItemCategory {
 	ENCHANTMENT,
 	ITEM,
 	PET,
+	POTION,
 	RUNE,
 	NONE,
 	;

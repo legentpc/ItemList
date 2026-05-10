@@ -7,6 +7,7 @@ import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockAttributesRepo
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockEnchantmentsRepo
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockItemsRepo
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockPetsRepo
+import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockPotionsRepo
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockRunesRepo
 import tech.thatgravyboat.skyblockapi.utils.lazy.registryBoundLazy
 
@@ -17,6 +18,7 @@ object SkyBlockItems {
 	private val enchantNames by registryBoundLazy { getAllEnchantmentNames() }
 	private val itemNames by registryBoundLazy { getAllItemNames() }
 	private val petNames by registryBoundLazy { getAllPetNames() }
+	private val potionNames by registryBoundLazy { getAllPotionNames() }
 	private val runeNames by registryBoundLazy { getAllRuneNames() }
 
 	private val numeralPattern = Regex("[_;]([0-9]+)$")
@@ -62,6 +64,12 @@ object SkyBlockItems {
 		}.flatten()
 	}
 
+	private fun getAllPotionNames(): List<SkyBlockPotionsRepo.Query> {
+		return RepoAPI.potions().potions().map { (_, v) ->
+			v.levels.map { x -> SkyBlockPotionsRepo.Query(id = v.id, level = x.key) }
+		}.flatten()
+	}
+
 	private fun getAllRuneNames(): List<SkyBlockRunesRepo.Query> {
 		return RepoAPI.runes().runes().map { (_, v) ->
 			v.map { x -> SkyBlockRunesRepo.Query(id = x.id, tier = x.tier) }
@@ -91,6 +99,12 @@ object SkyBlockItems {
 		petNames.forEach { key ->
 			val stack = SkyBlockPetsRepo.getLazyItemStack(key) ?: return@forEach
 			allItems.add(Item(stack, SkyBlockItemCategory.PET, "${key.id};${key.rarity.ordinal}"))
+		}
+
+		potionNames.forEach { key ->
+			val stack = SkyBlockPotionsRepo.getLazyItemStack(key) ?: return@forEach
+			val id = key.id.replace(Regex("^POTION_"), "")
+			allItems.add(Item(stack, SkyBlockItemCategory.POTION, "$id;${key.level}"))
 		}
 
 		runeNames.forEach { key ->
