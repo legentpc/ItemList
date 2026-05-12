@@ -12,10 +12,9 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import kotlin.math.roundToInt
 
-abstract class AbstractItemList(x: Int, y: Int, width: Int, height: Int) :
+abstract class AbstractItemList(width: Int, height: Int) :
 	AbstractContainerWidget(
-		x + PADDING, y, width, height,
-		Component.empty(), defaultSettings(8)
+		0, 0, width, height, Component.empty(), defaultSettings(8)
 	) {
 
 	val itemListHeight: Int
@@ -143,6 +142,6 @@ abstract class AbstractItemList(x: Int, y: Int, width: Int, height: Int) :
 	override fun updateWidgetNarration(output: NarrationElementOutput) {}
 
 	companion object {
-		private const val PADDING = StackDisplay.STACK_SIZE
+		const val PADDING = StackDisplay.STACK_SIZE
 	}
 }

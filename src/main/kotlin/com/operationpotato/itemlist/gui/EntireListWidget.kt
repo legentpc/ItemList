@@ -3,7 +3,7 @@ package com.operationpotato.itemlist.gui
 import com.operationpotato.itemlist.utils.SkyBlockItems
 import tech.thatgravyboat.skyblockapi.utils.lazy.registryBoundLazy
 
-class EntireListWidget(x: Int, y: Int, width: Int, height: Int) : AbstractItemList(x, y, width, height) {
+class EntireListWidget(width: Int, height: Int) : AbstractItemList(width, height) {
 	override fun getItems(): List<StackDisplay> {
 		return children
 	}

@@ -2,6 +2,7 @@ package com.operationpotato.itemlist
 
 import com.operationpotato.itemlist.api.impl.PluginManager
 import com.operationpotato.itemlist.gui.EntireListWidget
+import com.operationpotato.itemlist.gui.ItemPanel
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
@@ -29,18 +30,19 @@ object SkyBlockItemList : ClientModInitializer {
 		if (screen is AbstractContainerScreen<*>) {
 			if (screen is InventoryScreen && mc.player?.hasInfiniteMaterials() ?: false) return
 			val width = w - screen.right
-			val itemList = EntireListWidget(screen.right, 0, width, h)
+			val itemList = EntireListWidget(width, h)
+			val itemPanel = ItemPanel(screen.right, 0, width, h, itemList)
 
-			Screens.getWidgets(screen).add(itemList)
+			Screens.getWidgets(screen).add(itemPanel)
 			val mouseScroll = ScreenMouseEvents.allowMouseScroll(screen)
 			mouseScroll.addPhaseOrdering(Event.DEFAULT_PHASE, latePhase)
 			mouseScroll.register(latePhase) { _, x, y, scrollX, scrollY ->
-				itemList.mouseScrolled(x, y, scrollX, scrollY)
+				itemPanel.mouseScrolled(x, y, scrollX, scrollY)
 			}
 			val keyPress = ScreenKeyboardEvents.allowKeyPress(screen)
 			keyPress.addPhaseOrdering(Event.DEFAULT_PHASE, latePhase)
 			keyPress.register(latePhase) { _, event ->
-				itemList.keyPressed(event)
+				itemPanel.keyPressed(event)
 				return@register true
 			}
 			val beforeExtract = ScreenEvents.beforeExtract(screen)
