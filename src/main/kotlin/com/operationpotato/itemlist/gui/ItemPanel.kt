@@ -1,7 +1,8 @@
 package com.operationpotato.itemlist.gui
 
-import com.operationpotato.itemlist.utils.SkyBlockItemCategory
 import com.operationpotato.itemlist.utils.ComponentUtils
+import com.operationpotato.itemlist.utils.SkyBlockItemCategory
+import com.operationpotato.itemlist.utils.ThreadUtils
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.inventory.PageButton
 import net.minecraft.network.chat.Component
+import java.util.concurrent.Future
 
 class ItemPanel(x: Int, y: Int, width: Int, height: Int, val itemListWidget: EntireListWidget) :
 	AbstractContainerWidget(x, y, width, height, Component.empty(), defaultSettings(0)) {
@@ -35,6 +37,8 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int, val itemListWidget: Ent
 				16, 16, Component.empty(), ::onFilterButtonClick
 			)
 	val children: List<AbstractWidget> = listOf(nextPageButton, prevPageButton, filterButton, itemListWidget)
+
+	var filterFuture: Future<*>? = null
 
 	init {
 		itemListWidget.x = x + AbstractItemList.PADDING
@@ -58,9 +62,17 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int, val itemListWidget: Ent
 			ChatFormatting.GREEN
 		}
 		btn.message = Component.literal("F").withStyle(color)
-		itemListWidget.filterChildren(category)
-		itemListWidget.switchPage(0)
-		itemListWidget.updatePositions()
+		filterAsync(category)
+	}
+
+	fun filterAsync(category: SkyBlockItemCategory) {
+		val future = filterFuture
+		if (future != null && !future.isDone) future.cancel(true)
+		filterFuture = ThreadUtils.SORTING_EXECUTOR.submit {
+			itemListWidget.filterChildren(category)
+			itemListWidget.switchPage(0)
+			itemListWidget.updatePositionsAsync()
+		}
 	}
 
 	override fun children(): List<GuiEventListener> {
