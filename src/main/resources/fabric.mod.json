@@ -30,6 +30,7 @@
 	"mixins": [
 		"skyblock-item-list.mixins.json"
 	],
+	"accessWidener": "skyblock-item-list.classtweaker",
 	"depends": {
 		"fabricloader": ">=0.19.2",
 		"minecraft": "~26.1",

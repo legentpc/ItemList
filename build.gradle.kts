@@ -63,6 +63,10 @@ dependencies {
 	}
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/skyblock-item-list.classtweaker")
+}
+
 tasks.processResources {
 	inputs.property("version", project.property("version"))
 
