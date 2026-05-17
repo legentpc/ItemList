@@ -31,8 +31,7 @@ object SkyBlockItemList : ClientModInitializer {
 			if (screen is InventoryScreen && mc.player?.hasInfiniteMaterials() ?: false) return
 			val width = w - screen.right
 			if (width < 80) return
-			val itemList = EntireListWidget(width, h)
-			val itemPanel = ItemPanel(screen.right, 0, width, h, itemList)
+			val itemPanel = ItemPanel(screen.right, 0, width, h)
 
 			Screens.getWidgets(screen).add(itemPanel)
 			val mouseScroll = ScreenMouseEvents.allowMouseScroll(screen)

@@ -27,8 +27,9 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import java.util.concurrent.Future
 
-class ItemPanel(x: Int, y: Int, width: Int, height: Int, val itemListWidget: EntireListWidget) :
+class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 	AbstractContainerWidget(x, y, width, height, Component.empty(), defaultSettings(0)) {
+	val itemListWidget = EntireListWidget(width - AbstractItemList.PADDING, height)
 
 	val prevPageButton: Button = PageButton(0, 0, false, { _ ->
 		itemListWidget.scrollPage(false)
@@ -64,9 +65,8 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int, val itemListWidget: Ent
 
 		itemListWidget.x = x + AbstractItemList.PADDING
 		itemListWidget.y = y
-		itemListWidget.width = width - AbstractItemList.PADDING
-		itemListWidget.height = height
 		itemListWidget.positioningCallback = { McClient.runOrNextTick { positionTopBar() } }
+		itemListWidget.updatePositionsAsync()
 
 		filterButton.message = Component.literal("F")
 		searchBox.setHint(Component.literal("Search..."))

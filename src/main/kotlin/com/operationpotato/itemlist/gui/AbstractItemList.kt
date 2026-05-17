@@ -29,16 +29,12 @@ abstract class AbstractItemList(width: Int, height: Int) :
 
 	var visibleCols: Int = 0
 	var visibleRows: Int = 0
-	var horizontalPadding: Int = 0
+	var horizontalPadding: Int = 4
 	var currentPage: Int = 1
 	var maxPages: Int = 1
 
 	var sortingFuture: Future<*>? = null
 	var positioningCallback: Runnable? = null
-
-	init {
-		updatePositionsAsync()
-	}
 
 	abstract fun getItems(): List<StackDisplay>
 
@@ -68,9 +64,9 @@ abstract class AbstractItemList(width: Int, height: Int) :
 			itemCount != prevItemCount
 		) {
 			positionDisplays(visibleCols, visibleRows, scaledSize)
+			layout.switchPage(currentPage - 1)
 			positioningCallback?.run()
 		}
-		layout.switchPage(currentPage - 1)
 	}
 
 	// Off-Thread
@@ -107,7 +103,7 @@ abstract class AbstractItemList(width: Int, height: Int) :
 			}
 		}
 		currentPage = currentPage.coerceIn(1, maxPages)
-		updatePositionsAsync()
+		layout.switchPage(currentPage - 1)
 	}
 
 	fun scrollItemSize(scrollY: Double) {
