@@ -189,7 +189,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 		val screen = McScreen.self
 		if (screen !is AbstractContainerScreen<*>) return
 		x = screen.right
-		width = screen.width - screen.right
+		width = screen.width - screen.right - 2
 		updatePosition()
 	}
 

@@ -31,7 +31,7 @@ object SkyBlockItemList : ClientModInitializer {
 		if (screen is AbstractContainerScreen<*>) {
 			if (screen is InventoryScreen && mc.player?.hasInfiniteMaterials() ?: false) return
 			val width = w - screen.right
-			val itemPanel = ItemPanel(screen.right, 0, width, h)
+			val itemPanel = ItemPanel(screen.right, 0, width - 2, h)
 			instance = itemPanel
 			itemPanel.visible = Settings.enabled
 			if (width < 80) itemPanel.visible = false
