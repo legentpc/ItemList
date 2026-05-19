@@ -7,6 +7,8 @@ enum class SkyBlockItemCategory(val formattedName: String) {
 	ATTRIBUTE("Attributes"),
 	ENCHANTMENT("Enchants"),
 	ITEM("Items"),
+	MOB("Mobs"),
+	NPC("NPCs"),
 	PET("Pets"),
 	POTION("Potions"),
 	RUNE("Runes"),

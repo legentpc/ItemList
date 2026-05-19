@@ -17,6 +17,7 @@ object SkyBlockItems {
 	private val attributeNames by registryBoundLazy { getAllAttributeNames() }
 	private val enchantNames by registryBoundLazy { getAllEnchantmentNames() }
 	private val itemNames by registryBoundLazy { getAllItemNames() }
+	private val entityNames by registryBoundLazy { getAllEntityNames() }
 	private val petNames by registryBoundLazy { getAllPetNames() }
 	private val potionNames by registryBoundLazy { getAllPotionNames() }
 	private val runeNames by registryBoundLazy { getAllRuneNames() }
@@ -29,7 +30,7 @@ object SkyBlockItems {
 		val aMatch = numeralPattern.find(a)
 		val bMatch = numeralPattern.find(b)
 		if (aMatch != null && bMatch != null) {
-			val aStart = a.substring(0, aMatch.range.first);
+			val aStart = a.substring(0, aMatch.range.first)
 			val bStart = b.substring(0, bMatch.range.first)
 			val comparison = aStart.compareTo(bStart)
 			if (comparison == 0) {
@@ -53,6 +54,10 @@ object SkyBlockItems {
 
 	private fun getAllItemNames(): List<String> {
 		return RepoAPI.items().items().keys.toList()
+	}
+
+	private fun getAllEntityNames(): List<String> {
+		return RepoAPI.mobs().mobs().keys.toList()
 	}
 
 	private fun getAllPetNames(): List<SkyBlockPetsRepo.Query> {
@@ -94,6 +99,14 @@ object SkyBlockItems {
 		itemNames.forEach { key ->
 			val stack = SkyBlockItemsRepo.getLazyItemStack(key) ?: return@forEach
 			allItems.add(Item(stack, SkyBlockItemCategory.ITEM, key))
+		}
+
+		entityNames.forEach { key ->
+			val stack = SkyBlockMobsRepo.getLazyItemStack(key) ?: return@forEach
+			val type = key.substringAfterLast("_")
+			val isMob = SkyBlockMobsRepo.mobSuffixes.any { type == it }
+			val category = if (isMob) SkyBlockItemCategory.MOB else SkyBlockItemCategory.NPC
+			allItems.add(Item(stack, category, key))
 		}
 
 		petNames.forEach { key ->
