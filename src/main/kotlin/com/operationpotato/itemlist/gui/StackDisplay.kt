@@ -29,7 +29,7 @@ class StackDisplay(val lazyStack: LazyItemStack, val type: SkyBlockItemCategory)
 	var stack: ItemStack = ItemStack.EMPTY
 	var scale: Float = 1f
 
-	val stackName: String = stack.cleanName.lowercase()
+	val stackName: String by lazy { stack.cleanName.lowercase() }
 	val loreLines: List<String> by lazy { stack.getRawLore().map { it.lowercase() } }
 
 	fun getTooltipLines(): List<Component> {
