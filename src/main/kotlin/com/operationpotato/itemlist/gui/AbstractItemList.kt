@@ -12,7 +12,6 @@ import net.minecraft.util.CommonColors
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import java.util.concurrent.Future
-import kotlin.math.roundToInt
 
 abstract class AbstractItemList(width: Int, height: Int) :
 	AbstractContainerWidget(
@@ -23,7 +22,7 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		get() = height - 2 * PADDING - 2 * McFont.height
 
 	var layout: PaginatedGridLayout = PaginatedGridLayout(0, 0)
-	var itemScale: Float = 1f
+	var itemSize: Int = StackDisplay.STACK_SIZE
 	var itemCount: Int = 0
 	var scrollAmountWidget: TemporalTextWidget? = null
 
@@ -54,16 +53,15 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		val prevItemCount = itemCount
 		val adjustedWidth = width - PADDING
 
-		val scaledSize = (StackDisplay.STACK_SIZE * itemScale).roundToInt()
-		visibleCols = Math.floorDiv(adjustedWidth, scaledSize)
-		horizontalPadding = (adjustedWidth - visibleCols * scaledSize) / 2
-		visibleRows = itemListHeight / scaledSize
+		visibleCols = Math.floorDiv(adjustedWidth, itemSize)
+		horizontalPadding = (adjustedWidth - visibleCols * itemSize) / 2
+		visibleRows = itemListHeight / itemSize
 		itemCount = getItems().size
 		if ((PluginManager.didExclusionZonesChange() && layout.compareExcludedAreas()) ||
 			visibleCols != previouslyVisibleCols || visibleRows != previouslyVisibleRows ||
 			itemCount != prevItemCount
 		) {
-			positionDisplays(visibleCols, visibleRows, scaledSize)
+			positionDisplays(visibleCols, visibleRows, itemSize)
 			layout.switchPage(currentPage - 1)
 			positioningCallback?.run()
 		}
@@ -72,12 +70,13 @@ abstract class AbstractItemList(width: Int, height: Int) :
 	// Off-Thread
 	fun positionDisplays(maxCols: Int, maxRows: Int, scaledSize: Int) {
 		val newLayout = PaginatedGridLayout(x + horizontalPadding, y + PADDING + McFont.height / 2)
-		getItems().forEach { it.scale(itemScale) }
 		newLayout.addChildren(getItems(), maxCols, maxRows, scaledSize)
 		layout = newLayout
 		maxPages = layout.pages
 		currentPage = if (maxPages == 0) 0 else currentPage.coerceIn(1, maxPages)
 	}
+
+	fun scaleChildren() = getItems().forEach { it.scale(itemSize) }
 
 	override fun contentHeight(): Int {
 		return width
@@ -101,13 +100,19 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		layout.switchPage(currentPage - 1)
 	}
 
+	private val minScale = 0.5f
+	private val maxScale = 3f
 	fun scrollItemSize(scrollY: Double) {
-		itemScale += scrollY.toFloat() / 25
-		itemScale = itemScale.coerceIn(0.5f, 3f)
+		itemSize += if (scrollY > 0) 1 else -1
+		itemSize = itemSize.coerceIn(
+			(minScale * StackDisplay.STACK_SIZE).toInt(),
+			(maxScale * StackDisplay.STACK_SIZE).toInt()
+		)
 		scrollAmountWidget = TemporalTextWidget(
 			x + width / 2, itemListHeight / 2, 5f,
-			Component.literal("${(itemScale * 100).toInt()}%"), McFont.self
+			Component.literal("${(itemSize / StackDisplay.STACK_SIZE.toFloat() * 100).toInt()}%"), McFont.self
 		)
+		scaleChildren()
 		updatePositionsAsync()
 	}
 

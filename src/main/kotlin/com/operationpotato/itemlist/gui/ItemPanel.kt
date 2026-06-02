@@ -87,7 +87,8 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 			McClient.runOrNextTick { positionTopBar() }
 			McClient.runOrNextTick { updateSearchResult() }
 		}
-		itemListWidget.itemScale = Settings.scale
+		itemListWidget.itemSize = Settings.itemSize
+		itemListWidget.scaleChildren()
 		itemListWidget.updatePositionsAsync()
 	}
 
@@ -160,7 +161,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 
 	fun removed() {
 		Settings.enabled = visible
-		Settings.scale = itemListWidget.itemScale
+		Settings.itemSize = itemListWidget.itemSize
 	}
 
 	override fun children(): List<GuiEventListener> {

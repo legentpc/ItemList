@@ -21,7 +21,6 @@ import tech.thatgravyboat.skyblockapi.platform.scale
 import tech.thatgravyboat.skyblockapi.platform.translate
 import tech.thatgravyboat.skyblockapi.utils.extentions.cleanName
 import tech.thatgravyboat.skyblockapi.utils.extentions.getRawLore
-import kotlin.math.roundToInt
 
 class StackDisplay(val lazyStack: LazyItemStack, val type: SkyBlockItemCategory) :
 	AbstractWidget(0, 0, STACK_SIZE, STACK_SIZE, Component.empty()) {
@@ -69,10 +68,9 @@ class StackDisplay(val lazyStack: LazyItemStack, val type: SkyBlockItemCategory)
 		}
 	}
 
-	fun scale(scale: Float) {
-		val scaledSize = (STACK_SIZE * scale).roundToInt()
+	fun scale(scaledSize: Int) {
 		setSize(scaledSize, scaledSize)
-		this.scale = scale
+		this.scale = scaledSize / STACK_SIZE.toFloat()
 	}
 
 	fun matchesSearch(searches: List<String>): Boolean {
