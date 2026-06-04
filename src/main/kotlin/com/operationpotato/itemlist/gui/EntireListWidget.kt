@@ -30,6 +30,8 @@ class EntireListWidget(width: Int, height: Int) : AbstractItemList(width, height
 		visibleChildren = visibleChildren.filter { it.matchesSearch(searchFilters) }
 	}
 
+	override fun scaleChildren() = children.forEach { it.scale(itemSize) }
+
 	override fun getItems(): List<StackDisplay> {
 		if (visibleChildren.isEmpty()) searchChildren(currentSearch)
 		return visibleChildren

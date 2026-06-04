@@ -76,7 +76,7 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		currentPage = if (maxPages == 0) 0 else currentPage.coerceIn(1, maxPages)
 	}
 
-	fun scaleChildren() = getItems().forEach { it.scale(itemSize) }
+	open fun scaleChildren() = getItems().forEach { it.scale(itemSize) }
 
 	override fun contentHeight(): Int {
 		return height
