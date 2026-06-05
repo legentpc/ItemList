@@ -57,7 +57,7 @@ object SkyBlockItemList : ClientModInitializer {
 			keyPress.register(latePhase) { screen, event ->
 				val bl = itemPanel.onScreenKeyPress(screen, event)
 				if (!bl) return@register false
-				if (Keybinds.hideOverlay.matches(event)) {
+				if (event.hasControlDownWithQuirk() && Keybinds.hideOverlay.matches(event)) {
 					itemPanel.visible = !itemPanel.visible
 					Settings.enabled = itemPanel.visible
 					return@register false
