@@ -8,10 +8,10 @@ import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.input.MouseButtonEvent
+import net.minecraft.util.CommonColors
 import tech.thatgravyboat.repolib.api.recipes.Recipe
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.utils.text.Text
-import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 
 abstract class AbstractRecipeWidget(val recipe: Recipe<*>, width: Int, height: Int, val title: String? = null) :
 	AbstractWidget(0, 0, width, height, Text.of(title ?: "Recipe Widget")) {
@@ -21,7 +21,7 @@ abstract class AbstractRecipeWidget(val recipe: Recipe<*>, width: Int, height: I
 	protected fun addExtra() {
 		title?.let {
 			container.addChild(
-				StringWidget(Text.of(it, TextColor.GRAY), McFont.self),
+				StringWidget(Text.of(it, CommonColors.DARK_GRAY).apply { withoutShadow() }, McFont.self),
 				container.newChildLayoutSettings()
 					.alignHorizontallyCenter()
 					.alignVerticallyTop()
