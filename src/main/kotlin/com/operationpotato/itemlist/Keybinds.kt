@@ -38,6 +38,14 @@ object Keybinds {
 		)
 	)
 
+	val previousRecipe: KeyMapping = registerKeyMapping(
+		KeyMapping(
+			"key.skyblock-item-list.reopenPreviousRecipe",
+			GLFW.GLFW_KEY_BACKSPACE,
+			category,
+		)
+	)
+
 	fun handleKeybind(itemStack: ItemStack, keyEvent: KeyEvent): Boolean {
 		if (viewRecipe.matches(keyEvent)) {
 			RecipeScreen.openRecipeForItem(itemStack, McScreen.self)

@@ -11,6 +11,7 @@ import net.minecraft.client.gui.layouts.Layout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.KeyEvent
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.repolib.api.recipes.CraftingRecipe
 import tech.thatgravyboat.repolib.api.recipes.ForgeRecipe
@@ -38,7 +39,11 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>)
 	}
 
 	override fun onClose() {
-		parent?.let { McClient.setScreen(parent) } ?: super.onClose()
+		if (parent is RecipeScreen) {
+			parent.onClose()
+		} else {
+			McClient.setScreen(parent)
+		}
 	}
 
 	override fun isInGameUi() = true
@@ -52,7 +57,19 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>)
 		return right
 	}
 
+	override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
+		if (Keybinds.previousRecipe.matchesMouse(event)) {
+			McClient.setScreen(parent)
+			return true
+		}
+		return super.mouseClicked(event, doubleClick)
+	}
+
 	override fun keyPressed(event: KeyEvent): Boolean {
+		if (Keybinds.previousRecipe.matches(event)) {
+			McClient.setScreen(parent)
+			return true
+		}
 		val mousePos = McClient.mouse
 		var child = getChildAt(mousePos.first, mousePos.second).getOrNull()
 		// get the real child from the scrollable layout container
