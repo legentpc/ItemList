@@ -117,7 +117,7 @@ sealed class Currency(
 	}
 
 	fun withAmount(amount: Number): ItemStack = stack.copy().apply {
-		val lore = listOf(Text.of("Amount: ${amount.toFormattedString()}", TextColor.GRAY))
+		val lore = listOf(Text.of("Amount: ${amount.toFormattedString()}", TextColor.GRAY).apply { italic = false })
 		set(DataComponents.LORE, ItemLore(lore, lore))
 	}
 
