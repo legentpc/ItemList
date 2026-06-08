@@ -1,9 +1,13 @@
 package com.operationpotato.itemlist
 
+import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.registerKeyMapping
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.input.KeyEvent
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.ItemStack
 import org.lwjgl.glfw.GLFW
+import tech.thatgravyboat.skyblockapi.helpers.McScreen
 
 object Keybinds {
 	val category: KeyMapping.Category = KeyMapping.Category.register(
@@ -17,6 +21,33 @@ object Keybinds {
 			category
 		)
 	)
+
+	val viewRecipe: KeyMapping = registerKeyMapping(
+		KeyMapping(
+			"key.skyblock-item-list.viewRecipe",
+			GLFW.GLFW_KEY_R,
+			category,
+		)
+	)
+
+	val viewUsage: KeyMapping = registerKeyMapping(
+		KeyMapping(
+			"key.skyblock-item-list.viewUsage",
+			GLFW.GLFW_KEY_U,
+			category,
+		)
+	)
+
+	fun handleKeybind(itemStack: ItemStack, keyEvent: KeyEvent): Boolean {
+		if (viewRecipe.matches(keyEvent)) {
+			RecipeScreen.openRecipeForItem(itemStack, McScreen.self)
+			return true
+		} else if (viewUsage.matches(keyEvent)) {
+			// todo: add usages
+			return true
+		}
+		return false
+	}
 
 	fun init() {}
 }

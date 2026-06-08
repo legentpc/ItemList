@@ -1,5 +1,6 @@
 package com.operationpotato.itemlist.gui
 
+import com.operationpotato.itemlist.Keybinds
 import com.operationpotato.itemlist.Settings
 import com.operationpotato.itemlist.api.impl.PluginManager
 import com.operationpotato.itemlist.utils.ComponentUtils
@@ -182,13 +183,12 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 		if (this.searchBox.isFocused) {
 			this.searchBox.keyPressed(event)
 			return true
-		} else {
-			val mousePos = McClient.mouse
-			val child = itemListWidget.getChildAt(mousePos.first, mousePos.second).getOrNull()
-			if (child !is StackDisplay) return false
-			if (PluginManager.provideHoveredItem(child.stack, event)) return true
 		}
-		return false
+		val mousePos = McClient.mouse
+		val child = itemListWidget.getChildAt(mousePos.first, mousePos.second).getOrNull()
+		if (child !is StackDisplay) return false
+		if (PluginManager.provideHoveredItem(child.stack, event)) return true
+		return Keybinds.handleKeybind(child.stack, event)
 	}
 
 	fun updateWidth() {

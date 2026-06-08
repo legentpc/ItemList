@@ -12,11 +12,14 @@ import net.minecraft.util.CommonColors
 import tech.thatgravyboat.repolib.api.recipes.Recipe
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.utils.text.Text
+import java.util.function.Consumer
 
 abstract class AbstractRecipeWidget(val recipe: Recipe<*>, width: Int, height: Int, val title: String? = null) :
 	AbstractWidget(0, 0, width, height, Text.of(title ?: "Recipe Widget")) {
 
 	protected val container = FrameLayout(0, 0, width, height)
+
+	fun visitItems(consumer: Consumer<AbstractWidget>) = container.visitWidgets(consumer)
 
 	protected fun addExtra() {
 		title?.let {

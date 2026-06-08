@@ -1,4 +1,6 @@
 {
 	"key.category.skyblock-item-list.main": "SkyBlock Item List",
-	"key.skyblock-item-list.hideOverlay": "Hide Overlay"
+	"key.skyblock-item-list.hideOverlay": "Hide Overlay",
+	"key.skyblock-item-list.viewRecipe": "View Recipes",
+	"key.skyblock-item-list.viewUsage": "View Usages"
 }

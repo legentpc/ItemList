@@ -1,10 +1,12 @@
 package com.operationpotato.itemlist.gui.recipe
 
+import com.operationpotato.itemlist.Keybinds
 import com.operationpotato.itemlist.SkyBlockItemList.logger
 import com.operationpotato.itemlist.utils.SkyBlockRecipeAPI
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.KeyEvent
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.repolib.api.recipes.CraftingRecipe
 import tech.thatgravyboat.repolib.api.recipes.ForgeRecipe
@@ -14,6 +16,7 @@ import tech.thatgravyboat.repolib.api.recipes.ShopRecipe
 import tech.thatgravyboat.skyblockapi.api.remote.api.SkyBlockId.Companion.getSkyBlockId
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.text.Text
+import kotlin.jvm.optionals.getOrNull
 
 class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>) : Screen(Text.of("Recipe Screen")) {
 
@@ -32,6 +35,17 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>)
 	}
 
 	override fun isInGameUi() = true
+
+	override fun keyPressed(event: KeyEvent): Boolean {
+		val mousePos = McClient.mouse
+		val child = getChildAt(mousePos.first, mousePos.second).getOrNull()
+		var stack: ItemStack? = null
+		if (child is AbstractRecipeWidget) child.visitItems {
+			if (it is IngredientDisplay && it.isHovered) stack = it.stack
+		}
+		if (stack != null && Keybinds.handleKeybind(stack, event)) return true
+		return super.keyPressed(event)
+	}
 
 	companion object {
 		fun openRecipeForItem(stack: ItemStack, parent: Screen? = null) {
