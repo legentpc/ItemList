@@ -76,7 +76,16 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>)
 			}
 		}
 
-		fun openRecipe(recipes: List<Recipe<*>>, parent: Screen? = null) {
+		fun openUsageForItem(stack: ItemStack, parent: Screen? = null) {
+			val targetId = stack.getSkyBlockId() ?: return
+
+			val matchingRecipes = SkyBlockRecipeAPI.getUsagesForId(targetId)
+			if (matchingRecipes.isNotEmpty()) {
+				openRecipe(matchingRecipes, parent)
+			}
+		}
+
+		fun openRecipe(recipes: Set<Recipe<*>>, parent: Screen? = null) {
 			val widgets = recipes.mapNotNull {
 				when (it) {
 					is CraftingRecipe -> CraftingRecipeWidget(it)

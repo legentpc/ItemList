@@ -43,7 +43,7 @@ object Keybinds {
 			RecipeScreen.openRecipeForItem(itemStack, McScreen.self)
 			return true
 		} else if (viewUsage.matches(keyEvent)) {
-			// todo: add usages
+			RecipeScreen.openUsageForItem(itemStack, McScreen.self)
 			return true
 		}
 		return false

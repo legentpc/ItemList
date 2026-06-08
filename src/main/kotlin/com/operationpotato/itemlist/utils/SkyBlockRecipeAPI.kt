@@ -8,33 +8,53 @@ import tech.thatgravyboat.repolib.api.recipes.KatRecipe
 import tech.thatgravyboat.repolib.api.recipes.Recipe
 import tech.thatgravyboat.repolib.api.recipes.ShopRecipe
 import tech.thatgravyboat.skyblockapi.api.remote.api.SkyBlockId
+import tech.thatgravyboat.skyblockapi.utils.lazy.registryBoundLazy
 
 object SkyBlockRecipeAPI {
 
-	private val recipesByOutput: Map<SkyBlockId, List<Recipe<*>>> by lazy {
-		val typesToSearch = listOf(
-			Recipe.Type.CRAFTING,
-			Recipe.Type.FORGE,
-			Recipe.Type.KAT,
-			Recipe.Type.SHOP
-		)
+	val validRecipes = listOf(
+		Recipe.Type.CRAFTING,
+		Recipe.Type.FORGE,
+		Recipe.Type.KAT,
+		Recipe.Type.SHOP
+	)
 
-		val grouped = mutableMapOf<SkyBlockId, MutableList<Recipe<*>>>()
+	private val recipesByOutput: Map<SkyBlockId, Set<Recipe<*>>> by registryBoundLazy {
+		val grouped = mutableMapOf<SkyBlockId, MutableSet<Recipe<*>>>()
 
-		typesToSearch.flatMap { type ->
+		validRecipes.flatMap { type ->
 			RepoAPI.recipes().getRecipes(type)
 		}.forEach { recipe ->
 			val outputId = getRecipeOutputId(recipe)
 			if (outputId != null) {
-				grouped.getOrPut(outputId) { mutableListOf() }.add(recipe)
+				grouped.getOrPut(outputId) { mutableSetOf() }.add(recipe)
 			}
 		}
 
 		grouped
 	}
 
-	fun getRecipesForId(id: SkyBlockId): List<Recipe<*>> {
-		return recipesByOutput[id] ?: emptyList()
+	private val recipesByInput: Map<SkyBlockId, Set<Recipe<*>>> by registryBoundLazy {
+		val grouped = mutableMapOf<SkyBlockId, MutableSet<Recipe<*>>>()
+
+		validRecipes.flatMap { type ->
+			RepoAPI.recipes().getRecipes(type)
+		}.forEach { recipe ->
+			val inputIds = getRecipeInputIds(recipe)
+			inputIds?.forEach {
+				grouped.getOrPut(it) { mutableSetOf() }.add(recipe)
+			}
+		}
+
+		grouped
+	}
+
+	fun getRecipesForId(id: SkyBlockId): Set<Recipe<*>> {
+		return recipesByOutput[id] ?: emptySet()
+	}
+
+	fun getUsagesForId(id: SkyBlockId): Set<Recipe<*>> {
+		return recipesByInput[id] ?: emptySet()
 	}
 
 	private fun getRecipeOutputId(recipe: Recipe<*>): SkyBlockId? {
@@ -45,5 +65,21 @@ object SkyBlockRecipeAPI {
 			is KatRecipe -> recipe.output()
 			else -> null
 		}?.toSkyBlockId()
+	}
+
+	private fun getRecipeInputIds(recipe: Recipe<*>): List<SkyBlockId>? {
+		val items = when (recipe) {
+			is CraftingRecipe -> recipe.inputs
+			is ForgeRecipe -> recipe.inputs
+			is ShopRecipe -> recipe.inputs
+			is KatRecipe -> {
+				val list = mutableListOf(recipe.input)
+				list.addAll(recipe.items)
+				list
+			}
+
+			else -> null
+		}
+		return items?.mapNotNull { it.toSkyBlockId() }
 	}
 }
