@@ -23,12 +23,14 @@ import tech.thatgravyboat.skyblockapi.utils.text.Text
 import kotlin.jvm.optionals.getOrNull
 
 class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>) : Screen(Text.of("Recipe Screen")) {
+	var isOversized = false
 
 	override fun init() {
 		super.init()
 
 		var layout: Layout = LinearLayout.vertical().spacing(10).apply { recipes.forEach { addChild(it) } }
-		if (recipes.size > 4) layout = ScrollableLayout(McClient.self, layout, height)
+		isOversized = recipes.sumOf { it.height + 10 } > height
+		if (isOversized) layout = ScrollableLayout(McClient.self, layout, height)
 		layout.apply {
 			arrangeElements()
 			FrameLayout.centerInRectangle(this, this@RecipeScreen.rectangle)
@@ -46,7 +48,7 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>)
 		recipes.forEach {
 			if (it.right > right) right = it.right
 		}
-		if (recipes.size > 4) right += 10
+		if (isOversized) right += 10
 		return right
 	}
 
