@@ -3,6 +3,7 @@ package com.operationpotato.itemlist
 import com.mojang.logging.LogUtils
 import com.operationpotato.itemlist.api.impl.PluginManager
 import com.operationpotato.itemlist.gui.ItemPanel
+import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import com.operationpotato.itemlist.utils.ScaledItemRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
@@ -39,13 +40,18 @@ object SkyBlockItemList : ClientModInitializer {
 
 	fun addItemListWidget(mc: Minecraft, screen: Screen, w: Int, h: Int) {
 		if (!LocationAPI.isOnSkyBlock && !McClient.isDev) return
-		if (screen is AbstractContainerScreen<*>) {
+		if (screen is AbstractContainerScreen<*> || screen is RecipeScreen) {
 			if (screen is InventoryScreen && mc.player?.hasInfiniteMaterials() ?: false) return
-			val width = w - screen.right
+			val screenRight = when (screen) {
+				is InventoryScreen -> screen.right
+				is RecipeScreen -> screen.getRight()
+				else -> w
+			}
+			val width = w - screenRight
 			val itemPanel = instance ?: ItemPanel(0, 0, 0, 0)
 			instance = itemPanel
 
-			itemPanel.setPosition(screen.right, 0)
+			itemPanel.setPosition(screenRight, 0)
 			itemPanel.setSize(width - 2, h)
 			itemPanel.updatePosition()
 			itemPanel.visible = Settings.enabled

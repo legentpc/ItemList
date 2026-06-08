@@ -36,6 +36,14 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>)
 
 	override fun isInGameUi() = true
 
+	fun getRight(): Int {
+		var right = 0
+		recipes.forEach {
+			if (it.right > right) right = it.right
+		}
+		return right
+	}
+
 	override fun keyPressed(event: KeyEvent): Boolean {
 		val mousePos = McClient.mouse
 		val child = getChildAt(mousePos.first, mousePos.second).getOrNull()
