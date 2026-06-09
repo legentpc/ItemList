@@ -1,7 +1,6 @@
 package com.operationpotato.itemlist.gui.favorites
 
 import com.operationpotato.itemlist.Keybinds
-import com.operationpotato.itemlist.Settings
 import com.operationpotato.itemlist.favorites.FavoritesManager
 import com.operationpotato.itemlist.gui.AbstractItemList
 import com.operationpotato.itemlist.gui.StackDisplay
