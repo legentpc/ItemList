@@ -2,7 +2,9 @@ package com.operationpotato.itemlist
 
 import com.mojang.logging.LogUtils
 import com.operationpotato.itemlist.api.impl.PluginManager
+import com.operationpotato.itemlist.favorites.FavoritesManager
 import com.operationpotato.itemlist.gui.ItemPanel
+import com.operationpotato.itemlist.gui.favorites.FavoritesPanel
 import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import com.operationpotato.itemlist.utils.ScaledItemRenderer
 import net.fabricmc.api.ClientModInitializer
@@ -28,8 +30,10 @@ object SkyBlockItemList : ClientModInitializer {
 	val latePhase = id("late")
 	val logger: Logger = LogUtils.getLogger()
 	var instance: ItemPanel? = null
+	var favoriteInstance: FavoritesPanel? = null
 
 	override fun onInitializeClient() {
+		FavoritesManager.load()
 		Keybinds.init()
 		ScreenEvents.AFTER_INIT.addPhaseOrdering(Event.DEFAULT_PHASE, latePhase)
 		ScreenEvents.AFTER_INIT.register(latePhase, ::addItemListWidget)
@@ -58,13 +62,27 @@ object SkyBlockItemList : ClientModInitializer {
 			if (width < 80) itemPanel.visible = false
 
 			Screens.getWidgets(screen).add(itemPanel)
+
+			val favPanel = favoriteInstance ?: FavoritesPanel(0, 0, 0, 0)
+			favoriteInstance = favPanel
+
+			favPanel.setPosition(0, 0)
+			favPanel.setSize(width - 2, h)
+			favPanel.updatePosition()
+			favPanel.visible = Settings.enabled
+			if (width < 80) favPanel.visible = false
+
+			Screens.getWidgets(screen).add(favPanel)
+
 			val mouseScroll = ScreenMouseEvents.allowMouseScroll(screen)
 			mouseScroll.addPhaseOrdering(Event.DEFAULT_PHASE, latePhase)
 			mouseScroll.register(latePhase) { _, x, y, scrollX, scrollY ->
-				!itemPanel.mouseScrolled(x, y, scrollX, scrollY)
+				if (favPanel.mouseScrolled(x, y, scrollX, scrollY)) false
+				else !itemPanel.mouseScrolled(x, y, scrollX, scrollY)
 			}
 			ScreenMouseEvents.allowMouseClick(screen).register { _, _ ->
 				itemPanel.focused = null
+				favPanel.focused = null
 				true
 			}
 			val keyPress = ScreenKeyboardEvents.allowKeyPress(screen)
@@ -72,9 +90,11 @@ object SkyBlockItemList : ClientModInitializer {
 			keyPress.register(latePhase) { screen, event ->
 				if (event.hasControlDownWithQuirk() && Keybinds.hideOverlay.matches(event)) {
 					itemPanel.visible = !itemPanel.visible
+					favPanel.visible = itemPanel.visible
 					Settings.enabled = itemPanel.visible
 					return@register false
 				}
+				if (!favPanel.onScreenKeyPress(screen, event)) return@register false
 				if (!itemPanel.onScreenKeyPress(screen, event)) return@register false
 				return@register !handleScreenRecipeLookup(screen, event)
 			}
@@ -86,6 +106,7 @@ object SkyBlockItemList : ClientModInitializer {
 			}
 
 			ScreenEvents.remove(screen).register {
+				favPanel.removed()
 				itemPanel.removed()
 			}
 		}
@@ -98,6 +119,7 @@ object SkyBlockItemList : ClientModInitializer {
 
 	fun resetWidget() {
 		instance = null
+		favoriteInstance = null
 	}
 
 	fun id(path: String): Identifier = Identifier.fromNamespaceAndPath("skyblock-item-list", path)

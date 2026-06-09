@@ -1,10 +1,12 @@
 package com.operationpotato.itemlist.api.impl
 
 import com.google.common.collect.Ordering
+import com.operationpotato.itemlist.SkyBlockItemList
 import com.operationpotato.itemlist.api.ExclusionZoneManager
 import com.operationpotato.itemlist.api.HoveredItemManager
 import com.operationpotato.itemlist.api.Plugin
 import com.operationpotato.itemlist.api.RecipeButtonManager
+import com.operationpotato.itemlist.favorites.FavoritesManager
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.screens.Screen
@@ -15,9 +17,9 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.client.renderer.Rect2i
 import net.minecraft.world.effect.MobEffectInstance
 import org.jetbrains.annotations.ApiStatus
+import tech.thatgravyboat.repolib.api.recipes.Recipe
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
-import tech.thatgravyboat.skyblockapi.utils.extentions.cleanName
 import tech.thatgravyboat.skyblockapi.utils.extentions.getHoveredSlot
 import tech.thatgravyboat.skyblockapi.utils.extentions.right
 import tech.thatgravyboat.skyblockapi.utils.extentions.top
@@ -32,13 +34,27 @@ class DefaultPlugin : Plugin {
 	}
 
 	override fun registerRecipeButtons(manager: RecipeButtonManager) {
-		manager.addProvider { stack ->
+		manager.addProvider { recipeObj, _ ->
+			val recipe = recipeObj as? Recipe<*> ?: return@addProvider Optional.empty()
+			val isFav = FavoritesManager.isFavoriteRecipe(recipe)
+			val favText = Text.of("+")
+			val unfavText = Text.of("-")
+			val favTooltip = Tooltip.create(Text.of("Favorite Recipe"))
+			val unfavTooltip = Tooltip.create(Text.of("Unfavorite Recipe"))
+
 			Optional.of(
-				Button.builder(Text.of("+")) {
-					// TODO: add favouriting here or smth
-					println("meowing at ${stack.cleanName}")
+				Button.builder(if (isFav) unfavText else favText) {
+					if (FavoritesManager.isFavoriteRecipe(recipe)) {
+						FavoritesManager.removeFavoriteRecipe(recipe)
+						it.message = favText
+						it.setTooltip(favTooltip)
+					} else {
+						FavoritesManager.addFavoriteRecipe(recipe)
+						it.message = unfavText
+						it.setTooltip(unfavTooltip)
+					}
 				}.apply {
-					tooltip(Tooltip.create(Text.of("Favourite")))
+					tooltip(if (isFav) unfavTooltip else favTooltip)
 					size(10, 10)
 				}.build()
 			)
