@@ -75,8 +75,11 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>)
 		// get the real child from the scrollable layout container
 		if (child is AbstractContainerWidget) child = child.getChildAt(mousePos.first, mousePos.second).getOrNull()
 		var stack: ItemStack? = null
-		if (child is AbstractRecipeWidget) child.visitItems {
-			if (it is IngredientDisplay && it.isHovered) stack = it.stack
+		if (child is AbstractRecipeWidget) {
+			if (child.keyPressed(event)) return true
+			child.visitItems {
+				if (it is IngredientDisplay && it.isHovered) stack = it.stack
+			}
 		}
 		if (stack != null) {
 			if (PluginManager.provideHoveredItem(stack, event)) return true

@@ -1,8 +1,10 @@
 package com.operationpotato.itemlist.gui.recipe
 
+import com.operationpotato.itemlist.Keybinds
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
@@ -62,6 +64,8 @@ class IngredientDisplay(val stack: ItemStack, val showStackSize: Boolean = true)
 			RecipeScreen.openRecipeForItem(stack, McScreen.self)
 		}
 	}
+
+	override fun keyPressed(event: KeyEvent): Boolean = Keybinds.handleKeybind(stack, event)
 
 	override fun updateWidgetNarration(output: NarrationElementOutput) {}
 

@@ -1,12 +1,15 @@
 package com.operationpotato.itemlist.gui.recipe
 
+import com.operationpotato.itemlist.Keybinds
 import com.operationpotato.itemlist.api.impl.PluginManager
+import com.operationpotato.itemlist.favorites.FavoritesManager
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.client.input.KeyEvent
 import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.util.CommonColors
 import tech.thatgravyboat.repolib.api.recipes.Recipe
@@ -73,6 +76,22 @@ abstract class AbstractRecipeWidget(val recipe: Recipe<*>, width: Int, height: I
 		if (!handled) {
 			super.onClick(event, doubleClick)
 		}
+	}
+
+	override fun keyPressed(event: KeyEvent): Boolean {
+		if (Keybinds.favoriteItem.matches(event)) {
+			if (FavoritesManager.isFavoriteRecipe(recipe)) {
+				FavoritesManager.removeFavoriteRecipe(recipe)
+			} else {
+				FavoritesManager.addFavoriteRecipe(recipe)
+			}
+			return true
+		}
+		var handled = false
+		container.visitWidgets { widget ->
+			if (widget.isHovered && widget.keyPressed(event)) handled = true
+		}
+		return handled
 	}
 
 	override fun updateWidgetNarration(output: NarrationElementOutput) {}

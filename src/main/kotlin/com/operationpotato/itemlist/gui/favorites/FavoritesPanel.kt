@@ -43,6 +43,9 @@ class FavoritesPanel(x: Int, y: Int, width: Int, height: Int) :
 
 	override fun keyPressed(event: KeyEvent): Boolean {
 		if (!this.visible) return false
+		recipeWidget?.let {
+			if (it.isHovered && it.keyPressed(event)) return true
+		}
 		return listWidget.keyPressed(event)
 	}
 
