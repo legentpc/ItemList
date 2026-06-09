@@ -46,7 +46,7 @@ class ForgeRecipeWidget(recipe: ForgeRecipe) : AbstractRecipeWidget(recipe, 176,
 				color = TextColor.GREEN
 				italic = false
 			})
-			val lore = listOf(Text.of("Time: ${recipe.time.formatDuration()}", TextColor.GRAY))
+			val lore = listOf(Text.of("Time: ${recipe.time.formatDuration()}", TextColor.GRAY).apply { italic = false})
 			set(DataComponents.LORE, ItemLore(lore, lore))
 		}
 		container.addChild(IngredientDisplay(timeStack), container.topLeftAlignment(103, 52))

@@ -62,7 +62,7 @@ class KatRecipeWidget(recipe: KatRecipe) : AbstractRecipeWidget(recipe, 176, 86,
 				color = TextColor.GREEN
 				italic = false
 			})
-			val lore = listOf(Text.of("Time: ${recipe.time.formatDuration()}", TextColor.GRAY))
+			val lore = listOf(Text.of("Time: ${recipe.time.formatDuration()}", TextColor.GRAY).apply { italic = false })
 			set(DataComponents.LORE, ItemLore(lore, lore))
 		}
 		val (timeX, timeY) = if (hasExtraItems) 101 to 52 else 90 to 52
