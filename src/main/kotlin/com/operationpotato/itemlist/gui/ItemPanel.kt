@@ -9,7 +9,6 @@ import com.operationpotato.itemlist.utils.ThreadUtils.cancelAndSubmit
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
-import net.minecraft.client.gui.components.AbstractContainerWidget
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.CycleButton
@@ -18,8 +17,6 @@ import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.layouts.SpacerElement
-import net.minecraft.client.gui.narration.NarrationElementOutput
-import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.PageButton
 import net.minecraft.client.input.KeyEvent
@@ -31,8 +28,7 @@ import tech.thatgravyboat.skyblockapi.helpers.McScreen
 import tech.thatgravyboat.skyblockapi.utils.extentions.right
 import java.util.concurrent.Future
 
-class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
-	AbstractContainerWidget(x, y, width, height, Component.empty(), defaultSettings(0)) {
+class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, y, width, height) {
 	val itemListWidget = EntireListWidget(width - AbstractItemList.PADDING, height - 20)
 
 	val prevPageButton: Button = PageButton(0, 0, false, { _ ->
@@ -75,7 +71,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 			itemListWidget.currentSearch = searchBox.value
 	}
 
-	fun updatePosition() {
+	override fun updatePosition() {
 		positionTopBar()
 		positionBottomBar()
 
@@ -157,23 +153,13 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 		}
 	}
 
-	fun removed() {
+	override fun removed() {
 		Settings.enabled = visible
 		Settings.itemSize = itemListWidget.itemSize
 	}
 
-	override fun children(): List<GuiEventListener> {
-		return children
-	}
-
-	override fun mouseScrolled(
-		x: Double,
-		y: Double,
-		scrollX: Double,
-		scrollY: Double
-	): Boolean {
-		return itemListWidget.mouseScrolled(x, y, scrollX, scrollY)
-	}
+	override fun children(): List<GuiEventListener> = children
+	override fun getListWidget(): AbstractItemList = itemListWidget
 
 	override fun keyPressed(event: KeyEvent): Boolean {
 		if (!this.visible) return false
@@ -184,23 +170,12 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 		return itemListWidget.keyPressed(event)
 	}
 
-	fun updateWidth() {
+	override fun updateWidth() {
 		val screen = McScreen.self
 		if (screen !is AbstractContainerScreen<*>) return
 		x = screen.right
 		width = screen.width - screen.right - 2
 		updatePosition()
-	}
-
-	// if the screen should process this key press.
-	fun onScreenKeyPress(screen: Screen, event: KeyEvent): Boolean {
-		if (!this.visible) return true
-		if (event.isEscape) return true
-		return !keyPressed(event)
-	}
-
-	override fun contentHeight(): Int {
-		return height
 	}
 
 	override fun extractWidgetRenderState(
@@ -211,6 +186,4 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) :
 	) {
 		children.forEach { it.extractRenderState(graphics, mouseX, mouseY, a) }
 	}
-
-	override fun updateWidgetNarration(output: NarrationElementOutput) {}
 }
