@@ -46,6 +46,7 @@ class FavoritesListWidget(width: Int, height: Int) : AbstractItemList(width, hei
 
 		children = displays
 		scaleChildren()
+		this.visible = children.isNotEmpty()
 	}
 
 	override fun keyPressed(event: KeyEvent): Boolean {

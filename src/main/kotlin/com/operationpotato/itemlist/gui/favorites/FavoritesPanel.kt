@@ -92,7 +92,6 @@ class FavoritesPanel(x: Int, y: Int, width: Int, height: Int) :
 
 	override fun extractWidgetRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
 		recipeWidget?.extractRenderState(graphics, mouseX, mouseY, a)
-		if (listWidget.itemCount == 0) return
 		listWidget.extractRenderState(graphics, mouseX, mouseY, a)
 	}
 
