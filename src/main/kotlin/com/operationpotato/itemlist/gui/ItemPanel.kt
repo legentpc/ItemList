@@ -70,15 +70,25 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 		searchBox.addFormatter(SearchUtils::highlightSearch)
 		searchBox.setHint(Component.literal("Search or Calculate..."))
 		searchBox.setResponder { text ->
-			if (text.isExpression()) calculateAsync(text)
+			val isExpression = text.isExpression()
+			updateListVisibility(text, isExpression)
+			if (isExpression) calculateAsync(text)
 			else searchAsync(text)
 		}
 		searchBox.setMaxLength(999)
+		updateListVisibility(searchBox.value, false)
 
 		if (ConfigManager.get().lastFilter != SkyBlockItemCategory.ALL)
 			itemListWidget.currentFilter = filterButton.value
 		if (ConfigManager.get().lastSearch.isNotEmpty())
 			itemListWidget.currentSearch = searchBox.value
+	}
+
+	fun updateListVisibility(search: String, isExpression: Boolean) {
+		itemListWidget.visible = !ConfigManager.get().hideItemsWithoutSearch || (search.isNotEmpty() && !isExpression)
+		// top bar layout might not be initialized yet, so:
+		prevPageButton.visible = itemListWidget.visible
+		nextPageButton.visible = itemListWidget.visible
 	}
 
 	override fun updatePosition() {
