@@ -173,7 +173,6 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	}
 
 	override fun removed() {
-		ConfigManager.get().enabled = visible
 		ConfigManager.get().itemSize = itemListWidget.itemSize
 	}
 

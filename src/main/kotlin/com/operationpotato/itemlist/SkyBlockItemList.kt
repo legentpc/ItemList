@@ -27,6 +27,9 @@ import org.slf4j.Logger
 import tech.thatgravyboat.skyblockapi.api.location.LocationAPI
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.extentions.right
+import tech.thatgravyboat.skyblockapi.utils.text.Text
+import tech.thatgravyboat.skyblockapi.utils.text.Text.send
+import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 
 object SkyBlockItemList : ClientModInitializer {
 	val latePhase = id("late")
@@ -82,6 +85,10 @@ object SkyBlockItemList : ClientModInitializer {
 			Screens.getWidgets(screen).add(favPanel)
 
 			var modName: String? = PluginManager.onScreenOpened(screen)
+			if (modName != null) {
+				itemPanel.visible = false
+				favPanel.visible = false
+			}
 
 			val mouseScroll = ScreenMouseEvents.allowMouseScroll(screen)
 			mouseScroll.addPhaseOrdering(Event.DEFAULT_PHASE, latePhase)
@@ -98,6 +105,10 @@ object SkyBlockItemList : ClientModInitializer {
 			keyPress.addPhaseOrdering(Event.DEFAULT_PHASE, latePhase)
 			keyPress.register(latePhase) { screen, event ->
 				if (event.hasControlDownWithQuirk() && Keybinds.hideOverlay.matches(event)) {
+					if (modName != null) {
+						Text.of("Item list was previously hidden by $modName.").withColor(TextColor.YELLOW).send()
+						modName = null
+					}
 					itemPanel.visible = !itemPanel.visible
 					favPanel.visible = itemPanel.visible && ConfigManager.get().enableFavorites
 					ConfigManager.get().enabled = itemPanel.visible
@@ -116,6 +127,7 @@ object SkyBlockItemList : ClientModInitializer {
 
 			ScreenEvents.remove(screen).register {
 				PluginManager.onScreenClosed()
+				if (modName == null) ConfigManager.get().enabled = itemPanel.visible
 				favPanel.removed()
 				itemPanel.removed()
 			}

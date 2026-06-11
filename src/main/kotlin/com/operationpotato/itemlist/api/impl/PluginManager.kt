@@ -16,6 +16,7 @@ object PluginManager {
 	private val plugins: List<Plugin> =
 		FabricLoader.getInstance().getEntrypoints("skyblock-item-list", Plugin::class.java)
 	private val exclusionZoneManager = ExclusionZoneManagerImpl()
+	private val excludedScreensManager = ExcludedScreensManagerImpl()
 	private val hoveredItemManager = HoveredItemManagerImpl()
 	private val recipeButtonsManager = RecipeButtonsManagerImpl()
 
@@ -26,14 +27,16 @@ object PluginManager {
 	fun registerPlugins() {
 		for (plugin in plugins) {
 			plugin.registerExclusionZones(exclusionZoneManager)
+			plugin.registerExcludedScreens(excludedScreensManager)
 			plugin.registerHoveredItems(hoveredItemManager)
 			plugin.registerRecipeButtons(recipeButtonsManager)
 		}
 	}
 
 	fun onScreenOpened(screen: Screen): String? {
+		val res = excludedScreensManager.checkScreen(screen)
 		exclusionZoneManager.onScreenOpened(screen)
-		return null
+		return res
 	}
 
 	fun onScreenClosed() {

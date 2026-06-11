@@ -2,6 +2,7 @@ package com.operationpotato.itemlist.api.impl
 
 import com.google.common.collect.Ordering
 import com.operationpotato.itemlist.SkyBlockItemList
+import com.operationpotato.itemlist.api.ExcludedScreensManager
 import com.operationpotato.itemlist.api.ExclusionZoneManager
 import com.operationpotato.itemlist.api.HoveredItemManager
 import com.operationpotato.itemlist.api.Plugin
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.Rect2i
 import net.minecraft.world.effect.MobEffectInstance
 import org.jetbrains.annotations.ApiStatus
 import tech.thatgravyboat.repolib.api.recipes.Recipe
+import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
 import tech.thatgravyboat.skyblockapi.utils.extentions.getHoveredSlot
@@ -77,6 +79,14 @@ class DefaultPlugin : Plugin {
 		hoveredItemManager.addProvider { screen ->
 			if (screen is AbstractContainerScreen<*>) return@addProvider screen.getHoveredSlot()?.item
 			return@addProvider null
+		}
+	}
+
+	override fun registerExcludedScreens(excludedScreensManager: ExcludedScreensManager) {
+		if (!McClient.isDev) return
+		excludedScreensManager.addProvider(AbstractContainerScreen::class.java) { screen ->
+			if (screen.title.string == "Hide Item List") return@addProvider Optional.of("Excluded Screens Test")
+			return@addProvider Optional.empty()
 		}
 	}
 
