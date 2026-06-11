@@ -1,6 +1,6 @@
 package com.operationpotato.itemlist.gui.favorites
 
-import com.operationpotato.itemlist.Settings
+import com.operationpotato.itemlist.config.ConfigManager
 import com.operationpotato.itemlist.gui.AbstractItemList
 import com.operationpotato.itemlist.gui.AbstractItemPanel
 import com.operationpotato.itemlist.gui.recipe.AbstractRecipeWidget
@@ -35,7 +35,7 @@ class FavoritesPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPane
 		val listWidgetY = recipeWidget?.bottom ?: y
 		listWidget.setPosition(x, listWidgetY)
 		listWidget.setSize(width - 2, height - listWidgetY - 20)
-		listWidget.itemSize = Settings.favoritesItemSize
+		listWidget.itemSize = ConfigManager.get().favoritesItemSize
 		listWidget.scaleChildren()
 		listWidget.updatePositionsAsync()
 	}
@@ -60,7 +60,7 @@ class FavoritesPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPane
 	}
 
 	override fun removed() {
-		Settings.favoritesItemSize = listWidget.itemSize
+		ConfigManager.get().favoritesItemSize = listWidget.itemSize
 	}
 
 	fun setRecipe(recipe: Recipe<*>) {

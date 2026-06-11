@@ -2,12 +2,14 @@ package com.operationpotato.itemlist
 
 import com.mojang.logging.LogUtils
 import com.operationpotato.itemlist.api.impl.PluginManager
+import com.operationpotato.itemlist.config.ConfigManager
 import com.operationpotato.itemlist.favorites.FavoritesManager
 import com.operationpotato.itemlist.gui.ItemPanel
 import com.operationpotato.itemlist.gui.favorites.FavoritesPanel
 import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import com.operationpotato.itemlist.utils.ScaledItemRenderer
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
@@ -33,11 +35,16 @@ object SkyBlockItemList : ClientModInitializer {
 	var favoriteInstance: FavoritesPanel? = null
 
 	override fun onInitializeClient() {
+		ConfigManager.load()
 		FavoritesManager.load()
 		Keybinds.init()
 		ScreenEvents.AFTER_INIT.addPhaseOrdering(Event.DEFAULT_PHASE, latePhase)
 		ScreenEvents.AFTER_INIT.register(latePhase, ::addItemListWidget)
 		ClientPlayConnectionEvents.JOIN.register { _, _, _ -> resetWidget() }
+		ClientLifecycleEvents.CLIENT_STOPPING.register {
+			ConfigManager.save()
+			FavoritesManager.save()
+		}
 
 		PictureInPictureRendererRegistry.register { ScaledItemRenderer(it.bufferSource()) }
 	}
@@ -58,7 +65,7 @@ object SkyBlockItemList : ClientModInitializer {
 			itemPanel.setPosition(screenRight, 0)
 			itemPanel.setSize(width - 2, h)
 			itemPanel.updatePosition()
-			itemPanel.visible = Settings.enabled
+			itemPanel.visible = ConfigManager.get().enabled
 			if (width < 80) itemPanel.visible = false
 
 			Screens.getWidgets(screen).add(itemPanel)
@@ -69,7 +76,7 @@ object SkyBlockItemList : ClientModInitializer {
 			favPanel.setPosition(0, 0)
 			favPanel.setSize(width - 2, h)
 			favPanel.updatePosition()
-			favPanel.visible = Settings.enabled && Settings.enableFavorites
+			favPanel.visible = ConfigManager.get().enabled && ConfigManager.get().enableFavorites
 			if (width < 80) favPanel.visible = false
 
 			Screens.getWidgets(screen).add(favPanel)
@@ -90,8 +97,8 @@ object SkyBlockItemList : ClientModInitializer {
 			keyPress.register(latePhase) { screen, event ->
 				if (event.hasControlDownWithQuirk() && Keybinds.hideOverlay.matches(event)) {
 					itemPanel.visible = !itemPanel.visible
-					favPanel.visible = itemPanel.visible && Settings.enableFavorites
-					Settings.enabled = itemPanel.visible
+					favPanel.visible = itemPanel.visible && ConfigManager.get().enableFavorites
+					ConfigManager.get().enabled = itemPanel.visible
 					return@register false
 				}
 				if (!favPanel.onScreenKeyPress(screen, event)) return@register false

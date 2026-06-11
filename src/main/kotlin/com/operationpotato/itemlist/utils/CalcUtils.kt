@@ -2,7 +2,7 @@ package com.operationpotato.itemlist.utils
 
 import com.notkamui.keval.Keval
 import com.notkamui.keval.KevalNumbers
-import com.operationpotato.itemlist.Settings
+import com.operationpotato.itemlist.config.ConfigManager
 import tech.thatgravyboat.skyblockapi.api.profile.currency.CurrencyAPI
 import tech.thatgravyboat.skyblockapi.api.remote.hypixel.itemdata.ItemData
 import tech.thatgravyboat.skyblockapi.api.remote.hypixel.pricing.BazaarAPI
@@ -44,7 +44,7 @@ object CalcUtils {
 
 			caseInsensitiveConstant("purse") { CurrencyAPI.purse }
 			defaultConstants.forEach { (k, v) -> caseInsensitiveConstant(k) { v } }
-			Settings.customConstants.forEach { (k, v) -> caseInsensitiveConstant(k) { v } }
+			ConfigManager.get().customConstants.forEach { (k, v) -> caseInsensitiveConstant(k) { v } }
 		}
 
 
@@ -68,7 +68,7 @@ object CalcUtils {
 	}
 
 	fun String.isExpression(): Boolean {
-		if (Settings.requiresEquals) return this.startsWith('=')
+		if (ConfigManager.get().requiresEquals) return this.startsWith('=')
 		return this.any { it in "+-*/^()" }
 	}
 }

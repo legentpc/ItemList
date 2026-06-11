@@ -1,6 +1,6 @@
 package com.operationpotato.itemlist.gui
 
-import com.operationpotato.itemlist.Settings
+import com.operationpotato.itemlist.config.ConfigManager
 import com.operationpotato.itemlist.utils.CalcUtils
 import com.operationpotato.itemlist.utils.CalcUtils.isExpression
 import com.operationpotato.itemlist.utils.ComponentUtils
@@ -64,9 +64,9 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	private var calculatorResultColor: Int = 0
 
 	init {
-		filterButton.value = Settings.lastFilter
+		filterButton.value = ConfigManager.get().lastFilter
 		filterButton.message = Component.literal("F")
-		searchBox.value = Settings.lastSearch
+		searchBox.value = ConfigManager.get().lastSearch
 		searchBox.addFormatter(SearchUtils::highlightSearch)
 		searchBox.setHint(Component.literal("Search or Calculate..."))
 		searchBox.setResponder { text ->
@@ -75,9 +75,9 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 		}
 		searchBox.setMaxLength(999)
 
-		if (Settings.lastFilter != SkyBlockItemCategory.ALL)
+		if (ConfigManager.get().lastFilter != SkyBlockItemCategory.ALL)
 			itemListWidget.currentFilter = filterButton.value
-		if (Settings.lastSearch.isNotEmpty())
+		if (ConfigManager.get().lastSearch.isNotEmpty())
 			itemListWidget.currentSearch = searchBox.value
 	}
 
@@ -91,7 +91,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 			McClient.runOrNextTick { positionTopBar() }
 			McClient.runOrNextTick { updateSearchResult() }
 		}
-		itemListWidget.itemSize = Settings.itemSize
+		itemListWidget.itemSize = ConfigManager.get().itemSize
 		itemListWidget.scaleChildren()
 		itemListWidget.updatePositionsAsync()
 	}
@@ -127,7 +127,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	}
 
 	fun onFilterButtonClick(btn: CycleButton<SkyBlockItemCategory>, category: SkyBlockItemCategory) {
-		Settings.lastFilter = category
+		ConfigManager.get().lastFilter = category
 		val color = if (category == SkyBlockItemCategory.ALL) {
 			ChatFormatting.WHITE
 		} else {
@@ -140,7 +140,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	fun filterAsync(category: SkyBlockItemCategory) {
 		this.filterFuture = ThreadUtils.SORTING_EXECUTOR.cancelAndSubmit(filterFuture) {
 			itemListWidget.filterChildren(category)
-			itemListWidget.searchChildren(Settings.lastSearch)
+			itemListWidget.searchChildren(ConfigManager.get().lastSearch)
 			itemListWidget.switchPage(0)
 			itemListWidget.updatePositionsAsync()
 		}
@@ -155,7 +155,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	}
 
 	fun searchAsync(text: String) {
-		Settings.lastSearch = text
+		ConfigManager.get().lastSearch = text
 		calculatorResult = "" to false
 		this.searchFuture = ThreadUtils.SORTING_EXECUTOR.cancelAndSubmit(searchFuture) {
 			itemListWidget.searchChildren(text)
@@ -173,8 +173,8 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	}
 
 	override fun removed() {
-		Settings.enabled = visible
-		Settings.itemSize = itemListWidget.itemSize
+		ConfigManager.get().enabled = visible
+		ConfigManager.get().itemSize = itemListWidget.itemSize
 	}
 
 	override fun children(): List<GuiEventListener> = children

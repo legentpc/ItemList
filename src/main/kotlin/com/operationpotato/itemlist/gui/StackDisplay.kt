@@ -1,6 +1,6 @@
 package com.operationpotato.itemlist.gui
 
-import com.operationpotato.itemlist.Settings
+import com.operationpotato.itemlist.config.ConfigManager
 import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import com.operationpotato.itemlist.utils.ScaledItemRenderer
 import com.operationpotato.itemlist.utils.SkyBlockItemCategory
@@ -61,7 +61,7 @@ open class StackDisplay(val lazyStack: LazyItemStack, val type: SkyBlockItemCate
 			if (isHovered) graphics.blitSprite(
 				RenderPipelines.GUI_TEXTURED, HIGHLIGHT_BACK, -4, -4, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE
 			)
-			if (scale > 1f && Settings.nonPixelatedItemScale) {
+			if (scale > 1f && ConfigManager.get().nonPixelatedItemScale) {
 				ScaledItemRenderer.extract(graphics, stack, 0, 0)
 			} else {
 				graphics.fakeItem(stack, 0, 0)
