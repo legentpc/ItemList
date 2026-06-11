@@ -6,6 +6,7 @@ import com.operationpotato.itemlist.SkyBlockItemList
 import tech.thatgravyboat.repolib.api.recipes.Recipe
 import tech.thatgravyboat.skyblockapi.api.remote.api.SkyBlockId
 import tech.thatgravyboat.skyblockapi.helpers.McClient
+import tech.thatgravyboat.skyblockapi.utils.json.Json.toPrettyString
 import java.nio.file.Files
 
 object FavoritesManager {
@@ -30,7 +31,7 @@ object FavoritesManager {
 		try {
 			Files.createDirectories(file.parent)
 			Favorites.CODEC.encodeStart(JsonOps.INSTANCE, favorites).result().ifPresent {
-				Files.writeString(file, it.toString())
+				Files.writeString(file, it.toPrettyString())
 			}
 		} catch (e: Exception) {
 			SkyBlockItemList.logger.error("[SkyBlock Item List] Failed to save favorites.", e)
