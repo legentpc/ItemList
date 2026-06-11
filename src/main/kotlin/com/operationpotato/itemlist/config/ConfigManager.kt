@@ -8,7 +8,7 @@ import tech.thatgravyboat.skyblockapi.utils.json.Json.toPrettyString
 import java.nio.file.Files
 
 object ConfigManager {
-	private val file = McClient.config.resolve("skyblock-itemlist.json")
+	private val file = McClient.config.resolve("skyblock-item-list", "config.json")
 	private var settings: Settings = Settings()
 
 	fun get() = settings
