@@ -4,7 +4,6 @@ import com.operationpotato.itemlist.config.ConfigManager
 import com.operationpotato.itemlist.utils.SearchUtils
 import com.operationpotato.itemlist.utils.SkyBlockItemCategory
 import com.operationpotato.itemlist.utils.SkyBlockItems
-import tech.thatgravyboat.repolib.api.RepoAPI
 import tech.thatgravyboat.skyblockapi.utils.lazy.registryBoundLazy
 
 class EntireListWidget(width: Int, height: Int) : AbstractItemList(width, height) {
