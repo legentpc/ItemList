@@ -43,8 +43,8 @@ class DefaultPlugin : Plugin {
 				return@addProvider Optional.empty()
 			}
 			Optional.of(
-				Button.builder(Text.of("o")) { button ->
-					if (button.active) McClient.sendCommand("viewrecipe $id")
+				Button.builder(Text.of("o")) {
+					McClient.sendCommand("viewrecipe $id")
 				}.apply {
 					tooltip(Tooltip.create(Text.of("Show SkyBlock Craft")))
 					size(10, 10)
@@ -53,6 +53,7 @@ class DefaultPlugin : Plugin {
 		}
 
 		manager.addProvider { recipeObj, _ ->
+			if (isPinnedRecipe(recipeObj)) return@addProvider Optional.empty()
 			val recipe = recipeObj as? Recipe<*> ?: return@addProvider Optional.empty()
 			val isFav = FavoritesManager.isFavoriteRecipe(recipe)
 			val favText = Text.of("+")
@@ -79,8 +80,7 @@ class DefaultPlugin : Plugin {
 		}
 
 		manager.addProvider { recipeObj, _ ->
-			val pinnedRecipe = FavoritesManager.favorites.pinnedRecipe
-			if (pinnedRecipe.isEmpty || recipeObj != pinnedRecipe.get()) return@addProvider Optional.empty()
+			if (!isPinnedRecipe(recipeObj)) return@addProvider Optional.empty()
 			Optional.of(
 				Button.builder(Text.of("x")) {
 					SkyBlockItemList.favoriteInstance?.removeRecipe()
@@ -90,6 +90,11 @@ class DefaultPlugin : Plugin {
 				}.build()
 			)
 		}
+	}
+
+	private fun isPinnedRecipe(recipeObj: Any): Boolean {
+		val pinnedRecipe = FavoritesManager.favorites.pinnedRecipe
+		return pinnedRecipe.isPresent && recipeObj == pinnedRecipe.get()
 	}
 
 	override fun registerHoveredItems(hoveredItemManager: HoveredItemManager) {
