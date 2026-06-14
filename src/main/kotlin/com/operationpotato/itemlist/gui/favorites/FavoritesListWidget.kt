@@ -12,13 +12,20 @@ import com.operationpotato.itemlist.utils.SkyBlockMobsRepo
 import com.operationpotato.itemlist.utils.Utils.toLazy
 import net.minecraft.client.input.KeyEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
+import tech.thatgravyboat.skyblockapi.helpers.McFont
 import kotlin.jvm.optionals.getOrNull
 
 class FavoritesListWidget(width: Int, height: Int) : AbstractItemList(width, height) {
 	var children: List<StackDisplay> = emptyList()
+	override var alwaysShowPageText = false
 
 	init {
 		updateChildren()
+		this.positioningCallback = {
+			if (shouldShowPageText() != addedPageTextPadding) {
+				layout.y += (PADDING + McFont.height) / 2 * (if (addedPageTextPadding) -1 else 1)
+			}
+		}
 	}
 
 	fun updateChildren() {

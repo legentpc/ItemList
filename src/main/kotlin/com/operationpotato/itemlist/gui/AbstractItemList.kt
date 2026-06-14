@@ -38,6 +38,8 @@ abstract class AbstractItemList(width: Int, height: Int) :
 
 	var sortingFuture: Future<*>? = null
 	var positioningCallback: Runnable? = null
+	open var alwaysShowPageText: Boolean = true
+	var addedPageTextPadding: Boolean = true
 
 	abstract fun getItems(): List<StackDisplay>
 	abstract fun getAllItems(): List<StackDisplay>
@@ -50,6 +52,8 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		layout.switchPage(page)
 		currentPage = layout.activePage
 	}
+
+	fun shouldShowPageText(): Boolean = alwaysShowPageText || maxPages > 1
 
 	// Off-Thread
 	fun updatePositions() {
@@ -64,7 +68,7 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		itemCount = getItems().size
 		if ((PluginManager.didExclusionZonesChange() && layout.compareExcludedAreas()) ||
 			visibleCols != previouslyVisibleCols || visibleRows != previouslyVisibleRows ||
-			itemCount != prevItemCount
+			itemCount != prevItemCount || addedPageTextPadding != shouldShowPageText()
 		) {
 			positionDisplays(visibleCols, visibleRows, itemSize)
 			layout.switchPage(currentPage - 1)
@@ -74,7 +78,9 @@ abstract class AbstractItemList(width: Int, height: Int) :
 
 	// Off-Thread
 	fun positionDisplays(maxCols: Int, maxRows: Int, scaledSize: Int) {
-		val newLayout = PaginatedGridLayout(x + PADDING + horizontalPadding, y + PADDING + McFont.height / 2)
+		addedPageTextPadding = shouldShowPageText()
+		val itemY = if (!addedPageTextPadding) y + PADDING / 2 else y + PADDING + McFont.height / 2
+		val newLayout = PaginatedGridLayout(x + PADDING / 2 + horizontalPadding, itemY)
 		newLayout.addChildren(getItems(), maxCols, maxRows, scaledSize)
 		layout = newLayout
 		maxPages = layout.pages
@@ -144,7 +150,7 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		a: Float
 	) {
 		if (PluginManager.didExclusionZonesChange()) updatePositionsAsync()
-		graphics.centeredText(
+		if (shouldShowPageText()) graphics.centeredText(
 			McFont.self, Component.literal("${currentPage}/${maxPages}"),
 			x + width / 2, y + McFont.height, CommonColors.WHITE
 		)
