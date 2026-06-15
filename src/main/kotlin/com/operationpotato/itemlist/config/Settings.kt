@@ -7,7 +7,7 @@ import com.operationpotato.itemlist.utils.SkyBlockItemCategory
 
 data class Settings(
 	// General
-	var enabled: Boolean = false,
+	var enabled: Boolean = true,
 	var nonPixelatedItemScale: Boolean = true, // Currently a bit laggy when actively scaling, else runs fine
 
 	// Main List
