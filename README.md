@@ -39,6 +39,7 @@ Check out [the gallery](https://modrinth.com/mod/skyblock-item-list/gallery) to 
 	* To view its recipe, press `R`.
 	* To view its usages, press `U`.
 	* To favorite the item, press `F`.
+* Access the Config through [Mod Menu](https://modrinth.com/mod/modmenu) or by clicking the "⚙" button next to the search bar.
 
 ## My Item List doesn't load
 
