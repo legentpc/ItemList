@@ -136,7 +136,8 @@ abstract class AbstractItemList(width: Int, height: Int) :
 		scrollY: Double
 	): Boolean {
 		if (!visible) return false
-		if (!this.isMouseOver(x, y)) return false
+		if (!super.isMouseOver(x, y)) return false
+		if (PluginManager.isInAnyExclusionZone(x, y)) return false
 		if (McClient.self.hasControlDown()) {
 			scrollItemSize(scrollY)
 		} else {
