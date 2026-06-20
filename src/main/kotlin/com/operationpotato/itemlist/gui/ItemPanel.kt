@@ -59,7 +59,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 			.withValues(SkyBlockItemCategory.entries)
 			.withTooltip(::createFilterTooltip)
 			.create(Component.empty(), ::onFilterButtonClick)
-	val searchBox: EditBox = EditBox(
+	val searchBox = ClearableEditBox(
 		McFont.self, 100, 16, Component.empty() // Giving it default width fixes it not starting with the input
 	)
 	var bottomLayout: LinearLayout = LinearLayout.horizontal()
