@@ -7,8 +7,8 @@ import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
 
-class SpacerTextWidget(x: Int, y: Int, width: Int, message: Component, val font: Font) :
-	AbstractWidget(x, y, width, font.lineHeight, message) {
+class SpacerTextWidget(width: Int, message: Component, val font: Font) :
+	AbstractWidget(0, 0, width, font.lineHeight, message) {
 	override fun extractWidgetRenderState(
 		graphics: GuiGraphicsExtractor,
 		mouseX: Int,

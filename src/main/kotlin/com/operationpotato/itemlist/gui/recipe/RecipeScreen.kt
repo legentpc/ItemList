@@ -32,7 +32,8 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import kotlin.jvm.optionals.getOrNull
 
-class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>, val pageIndex: Int = 0) : Screen(Text.of("Recipe Screen")) {
+class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>, val pageIndex: Int = 0) :
+	Screen(Text.of("Recipe Screen")) {
 
 	var pageAmount: Int = 0
 
@@ -65,22 +66,22 @@ class RecipeScreen(val parent: Screen?, val recipes: List<AbstractRecipeWidget>,
 
 		topLayout = LinearLayout.horizontal()
 		val layout = LinearLayout.vertical().spacing(5).apply {
+			if (pageAmount == 0) return@apply
 			topLayout.addChild(prevPageButton) { it.alignHorizontallyLeft() }
+			//@formatter:off
 			topLayout.addChild(SpacerTextWidget(
-				0,
-				0,
 				pages[pageIndex].maxBy { it.width }.width - 46,
 				Text.of("${pageIndex + 1} / ${pages.size}"),
 				font
 			))
+			//@formatter:on
 			topLayout.addChild(nextPageButton) { it.alignHorizontallyRight() }
 			topLayout.arrangeElements()
 			addChild(topLayout)
-
-			pages[pageIndex].forEach(::addChild)
 		}
 
 		layout.apply {
+			pages[pageIndex].forEach(::addChild)
 			arrangeElements()
 			FrameLayout.centerInRectangle(this, this@RecipeScreen.rectangle)
 		}.visitWidgets(this::addRenderableWidget)
