@@ -67,7 +67,8 @@ object CalcUtils {
 	}
 
 	fun String.isExpression(): Boolean {
-		if (ConfigManager.get().calculator.requiresEquals) return this.startsWith('=')
-		return this.any { it in "+-*/^()" }
+		val equals = this.startsWith('=')
+		if (ConfigManager.get().calculator.requiresEquals) return equals
+		return equals || this.any { it in "+-*/^()" }
 	}
 }
