@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.CycleButton
-import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.layouts.LinearLayout
@@ -65,6 +64,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	var bottomLayout: LinearLayout = LinearLayout.horizontal()
 
 	val children: List<AbstractWidget> = listOf(nextPageButton, prevPageButton, filterButton, searchBox, settingsButton, itemListWidget)
+	val searchHint = Component.literal("Search or Calculate...")
 
 	var filterFuture: Future<*>? = null
 	var searchFuture: Future<*>? = null
@@ -79,7 +79,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 			itemListWidget.currentFilter = filterButton.value
 
 		searchBox.addFormatter(SearchUtils::highlightSearch)
-		searchBox.setHint(Component.literal("Search or Calculate..."))
+		searchBox.setHint(searchHint)
 		searchBox.setResponder { text ->
 			addSuggestions(text)
 			val isExpression = text.isExpression()
@@ -127,6 +127,8 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 	fun positionBottomBar() {
 		filterButton.setSize(16, 16)
 		searchBox.width = width - 10 - filterButton.width * 3
+		if (searchBox.width > McFont.width(searchHint)) searchBox.setHint(searchHint)
+		else searchBox.setHint(Component.literal("Search..."))
 
 		bottomLayout = LinearLayout.horizontal()
 		bottomLayout.defaultCellSetting().paddingRight(4)
