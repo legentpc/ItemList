@@ -90,6 +90,9 @@ fun DependencyHandlerScope.includeImplementation(dependencyNotation: Provider<*>
 loom {
 	runConfigs["client"].apply {
 		ideConfigGenerated(true)
+		runDir = "../../run"
+		val modsDir = rootProject.projectDir.resolve("run/mods/${sc.current.project}/")
+		vmArg("-Dfabric.modsFolder=\"$modsDir\"")
 	}
 
 	accessWidenerPath = sc.process(
