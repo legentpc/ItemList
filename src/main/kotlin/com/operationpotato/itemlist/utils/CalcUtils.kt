@@ -60,7 +60,8 @@ object CalcUtils {
 			expression = resolverRegex.replace(expression) { matchResult ->
 				val name = matchResult.groupValues[1].trim().lowercase()
 				val arg = matchResult.groupValues[2].trim().uppercase()
-				customResolvers[name]?.invoke(arg)?.toString() ?: matchResult.value
+				val result = customResolvers[name]?.invoke(arg) ?: return@replace matchResult.value
+				"%.2f".format(result)
 			}
 
 			expression = expression.replace(Regex("(?i)((?:\\d+)?\\.?\\d*)(\\w+)")) { match ->
