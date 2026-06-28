@@ -60,9 +60,13 @@ class PaginatedGridLayout(private var x: Int, private var y: Int) : Layout {
 		val maxArea = maxCols * maxRows
 		if (maxArea - excludedAreas.size <= 0) return
 		val iterator = children.iterator()
+		val exclusionSpacers = mutableListOf<Triple<SpacerElement, Int, Int>>()
 		while (iterator.hasNext()) {
 			if (excludedAreas.contains(Pair(col, row))) {
-				layout.addChild(SpacerElement(itemSize, itemSize), row, col)
+				if (page == 0) {
+					val spacer = layout.addChild(SpacerElement(itemSize, itemSize), row, col)
+					exclusionSpacers.add(Triple(spacer, row, col))
+				}
 			} else {
 				layout.addChild(iterator.next(), row, col)
 			}
@@ -76,6 +80,7 @@ class PaginatedGridLayout(private var x: Int, private var y: Int) : Layout {
 				col = 0
 				gridLayouts.add(layout)
 				layout = MarkedGridLayout(x, y)
+				exclusionSpacers.forEach { (spacer, row, col) -> layout.addChild(spacer, row, col) }
 				page += 1
 				if (page > children.size) {
 					gridLayouts.clear()
