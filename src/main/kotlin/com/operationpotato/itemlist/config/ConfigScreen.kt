@@ -20,6 +20,7 @@ object ConfigScreen {
 		val elements = createLatticeElements()
 		val screen = Lattice.createConfigScreen(elements, {
 			McClient.self.options.save()
+			ConfigManager.save()
 		}, parent)
 		return screen
 	}
