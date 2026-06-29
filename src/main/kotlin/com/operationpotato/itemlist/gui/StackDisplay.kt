@@ -1,8 +1,6 @@
 package com.operationpotato.itemlist.gui
 
 import com.operationpotato.itemlist.config.ConfigManager
-import com.operationpotato.itemlist.config.Settings
-import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import com.operationpotato.itemlist.utils.ScaledItemRenderer
 import com.operationpotato.itemlist.utils.SkyBlockItemCategory
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -21,7 +19,6 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.helpers.McLevel
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
-import tech.thatgravyboat.skyblockapi.helpers.McScreen
 import tech.thatgravyboat.skyblockapi.platform.pushPop
 import tech.thatgravyboat.skyblockapi.platform.scale
 import tech.thatgravyboat.skyblockapi.platform.translate
@@ -31,12 +28,17 @@ import tech.thatgravyboat.skyblockapi.utils.extentions.getRawLore
 open class StackDisplay(
 	val lazyStack: LazyItemStack,
 	val type: SkyBlockItemCategory,
-	val isVanilla: Boolean = false
+	val isVanilla: Boolean = false,
+	searchAliases: List<String> = emptyList(),
 ) : AbstractWidget(0, 0, STACK_SIZE, STACK_SIZE, Component.empty()) {
 
 	var stack: ItemStack = ItemStack.EMPTY
 	var scale: Float = 1f
 
+	private val quickSearchText: String = searchAliases.flatMap { alias ->
+		val lower = alias.lowercase()
+		listOf(lower, lower.replace('_', ' ').replace(';', ' '))
+	}.distinct().joinToString("\n")
 	val stackName: String by lazy { stack.cleanName.lowercase() }
 	val loreLines: List<String> by lazy { stack.getRawLore().map { it.lowercase() } }
 
@@ -104,8 +106,21 @@ open class StackDisplay(
 	}
 
 	open fun matchesSearch(searches: List<String>): Boolean {
+		if (searches.any(quickSearchText::contains)) return true
+		if (stack.isEmpty) return false
+
+		val stackSearchText = buildString {
+			append(stackName)
+			append('\n')
+			append(loreLines.joinToString("\n"))
+		}
+		return searches.any(stackSearchText::contains)
+	}
+
+	fun warmSearchCache() {
 		createStackIfEmpty()
-		return searches.any { stackName.contains(it) || loreLines.any { line -> line.contains(it) } }
+		stackName
+		loreLines
 	}
 
 	override fun updateWidgetNarration(output: NarrationElementOutput) {}

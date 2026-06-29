@@ -4,10 +4,12 @@ import com.mojang.logging.LogUtils
 import com.operationpotato.itemlist.api.impl.PluginManager
 import com.operationpotato.itemlist.config.ConfigManager
 import com.operationpotato.itemlist.favorites.FavoritesManager
+import com.operationpotato.itemlist.gui.EntireListWidget
 import com.operationpotato.itemlist.gui.ItemPanel
 import com.operationpotato.itemlist.gui.favorites.FavoritesPanel
 import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import com.operationpotato.itemlist.utils.ScaledItemRenderer
+import com.operationpotato.itemlist.utils.ThreadUtils
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
@@ -50,6 +52,7 @@ object SkyBlockItemList : ClientModInitializer {
 		}
 
 		PictureInPictureRendererRegistry.register { ScaledItemRenderer(/*? if <26.2 {*//*it.bufferSource() *//*? }*/) }
+		ThreadUtils.SORTING_EXECUTOR.submit(EntireListWidget::warmSearchCache)
 	}
 
 	fun addItemListWidget(mc: Minecraft, screen: Screen, w: Int, h: Int) {

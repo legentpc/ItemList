@@ -1,7 +1,6 @@
 package com.operationpotato.itemlist.gui
 
 import com.operationpotato.itemlist.config.ConfigManager
-import com.operationpotato.itemlist.gui.recipe.RecipeScreen
 import com.operationpotato.itemlist.utils.SkyBlockItems
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.input.MouseButtonEvent
@@ -13,14 +12,12 @@ import tech.thatgravyboat.skyblockapi.helpers.McScreen
 import tech.thatgravyboat.skyblockapi.platform.pushPop
 import tech.thatgravyboat.skyblockapi.platform.scale
 import tech.thatgravyboat.skyblockapi.platform.translate
-import tech.thatgravyboat.skyblockapi.utils.extentions.cleanName
-import tech.thatgravyboat.skyblockapi.utils.extentions.getRawLore
 import kotlin.math.ceil
 
 class CollapsibleStackDisplay(
 	val familyItems: List<SkyBlockItems.Item>,
 	mainItem: SkyBlockItems.Item
-) : StackDisplay(mainItem.stack, mainItem.category, mainItem.isVanilla) {
+) : StackDisplay(mainItem.stack, mainItem.category, mainItem.isVanilla, mainItem.searchAliases()) {
 
 	var isExpanded = false
 	var hoveredChildIndex = -1
@@ -36,10 +33,7 @@ class CollapsibleStackDisplay(
 
 	override fun matchesSearch(searches: List<String>): Boolean {
 		val filtered = familyItems.filter { item ->
-			val stack = item.stack.create()
-			val stackName = stack.cleanName.lowercase()
-			val loreLines = stack.getRawLore().map { it.lowercase() }
-			searches.any { stackName.contains(it) || loreLines.any { line -> line.contains(it) } }
+			searches.any(item.quickSearchText::contains) || searches.any(item.searchText::contains)
 		}
 		filteredFamilyItems = filtered
 		return filtered.isNotEmpty()

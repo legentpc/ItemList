@@ -84,7 +84,10 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 			else searchAsync(text)
 		}
 		searchBox.setMaxLength(999)
-		searchBox.value = ConfigManager.get().mainList.lastSearch
+		val lastSearch = ConfigManager.get().mainList.lastSearch
+		if (lastSearch.isNotEmpty()) {
+			searchBox.value = lastSearch
+		}
 	}
 
 	fun updateListVisibility(search: String, isExpression: Boolean) {
@@ -231,6 +234,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 
 	override fun removed() {
 		ConfigManager.get().mainList.itemSize = itemListWidget.itemSize
+		ConfigManager.get().mainList.lastSearch = ""
 	}
 
 	override fun children(): List<GuiEventListener> = children

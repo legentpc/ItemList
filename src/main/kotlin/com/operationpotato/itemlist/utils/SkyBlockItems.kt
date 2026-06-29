@@ -9,6 +9,8 @@ import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockItemsRepo
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockPetsRepo
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockPotionsRepo
 import tech.thatgravyboat.skyblockapi.api.repo.apis.SkyBlockRunesRepo
+import tech.thatgravyboat.skyblockapi.utils.extentions.cleanName
+import tech.thatgravyboat.skyblockapi.utils.extentions.getRawLore
 import tech.thatgravyboat.skyblockapi.utils.lazy.registryBoundLazy
 
 object SkyBlockItems {
@@ -143,5 +145,25 @@ object SkyBlockItems {
 		val id: String,
 		val isVanilla: Boolean = false,
 		val repoId: String = id,
-	)
+	) {
+		val quickSearchText: String = searchAliases().flatMap { alias ->
+			val lower = alias.lowercase()
+			listOf(lower, lower.replace('_', ' ').replace(';', ' '))
+		}.distinct().joinToString("\n")
+
+		val searchText: String by lazy {
+			val createdStack = stack.create()
+			buildString {
+				append(createdStack.cleanName.lowercase())
+				append('\n')
+				append(quickSearchText)
+				append('\n')
+				append(createdStack.getRawLore().joinToString("\n") { it.lowercase() })
+			}
+		}
+
+		fun searchAliases(): List<String> {
+			return listOf(id, repoId)
+		}
+	}
 }
