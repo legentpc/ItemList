@@ -74,6 +74,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 		if (ConfigManager.get().mainList.lastFilter != SkyBlockItemCategory.ALL)
 			itemListWidget.currentFilter = filterButton.value
 
+		ConfigManager.get().mainList.lastSearch = ""
 		searchBox.addFormatter(SearchUtils::highlightSearch)
 		searchBox.setHint(searchHint)
 		searchBox.setResponder { text ->
@@ -84,7 +85,6 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 			else searchAsync(text)
 		}
 		searchBox.setMaxLength(999)
-		ConfigManager.get().mainList.lastSearch = ""
 	}
 
 	fun updateListVisibility(search: String, isExpression: Boolean) {

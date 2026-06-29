@@ -109,6 +109,7 @@ class Settings {
 
 		var customFilters: MutableList<SkyBlockItemCategory> = SkyBlockItemCategory.NON_ENTITIES.toMutableList()
 
+		@Transient
 		var lastSearch: String = ""
 		var lastFilter: SkyBlockItemCategory = SkyBlockItemCategory.CUSTOM
 	}
