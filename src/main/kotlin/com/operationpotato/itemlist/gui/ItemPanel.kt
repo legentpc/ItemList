@@ -84,10 +84,7 @@ class ItemPanel(x: Int, y: Int, width: Int, height: Int) : AbstractItemPanel(x, 
 			else searchAsync(text)
 		}
 		searchBox.setMaxLength(999)
-		val lastSearch = ConfigManager.get().mainList.lastSearch
-		if (lastSearch.isNotEmpty()) {
-			searchBox.value = lastSearch
-		}
+		ConfigManager.get().mainList.lastSearch = ""
 	}
 
 	fun updateListVisibility(search: String, isExpression: Boolean) {

@@ -117,12 +117,6 @@ open class StackDisplay(
 		return searches.any(stackSearchText::contains)
 	}
 
-	fun warmSearchCache() {
-		createStackIfEmpty()
-		stackName
-		loreLines
-	}
-
 	override fun updateWidgetNarration(output: NarrationElementOutput) {}
 
 	companion object {

@@ -44,21 +44,11 @@ class EntireListWidget(width: Int, height: Int) : AbstractItemList(width, height
 	override fun getAllItems(): List<StackDisplay> = children
 
 	companion object {
-		private var didWarmSearchCache = false
-
 		private val groupedChildren: List<StackDisplay> by registryBoundLazy { getGroupedItems() }
 		private val normalChildren: List<StackDisplay> by registryBoundLazy { getItems() }
 
 		val children: List<StackDisplay>
 			get() = if (ConfigManager.get().mainList.groupFamilies) groupedChildren else normalChildren
-
-		fun warmSearchCache() {
-			if (didWarmSearchCache) return
-			didWarmSearchCache = true
-
-			normalChildren.forEach(StackDisplay::warmSearchCache)
-			SkyBlockItems.items.forEach { it.searchText }
-		}
 
 		private fun getGroupedItems(): List<StackDisplay> {
 			val displays: MutableList<StackDisplay> = mutableListOf()
